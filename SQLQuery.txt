@@ -1,0 +1,150 @@
+Create Database CourseDB 
+--Создали базу данных
+
+Use CourseDB;
+-- Чтобы не писать полный путь
+
+Create Table Roms
+(ID Int Primary Key IDENTITY,
+ Name_Room Nvarchar(20) UNIQUE
+)
+
+Create Table Sensors
+(
+ ID Int Primary Key References Roms (ID) ON DELETE CASCADE,
+ Temp_Sensor Decimal(10,2) Check(Temp_Sensor>-30 AND Temp_Sensor<50),
+ Humid_Sensor Decimal(10,2) Check(Humid_Sensor>0 AND Humid_Sensor<99),
+ Motion_Sensor Bit,
+ Light_Sensor Int,
+ CO_Sensor Int,
+ Data_Time Datetime2(0)
+)
+
+Create Table Temp_Sensors
+(
+ ID Int Primary Key References Roms (ID) ON DELETE CASCADE,
+ Temp_Addres Nvarchar(20) 
+ )
+
+ Create Table Humid_Sensors
+(
+ ID Int Primary Key References Roms (ID) ON DELETE CASCADE,
+ Humid_Addres Nvarchar(20) 
+ )
+
+ Create Table Motion_Sensors
+(
+ ID Int Primary Key References Roms (ID) ON DELETE CASCADE,
+ Motion_Addres Nvarchar(20) UNIQUE
+ )
+
+
+ Insert Into Roms 
+ Values 
+ 
+ ('Bathroom')
+
+
+ Insert Into Temp_Sensors
+ Values
+ (1,'0x28, 0xE5, 0x05'),
+ (2,'0x28, 0x96, 0x0C'),
+ (3,'0x28, 0x3C, 0x33'),
+ (4,'0x28, 0x7E, 0xAC'),
+ (5,'0x28, 0x2B, 0x80'),
+ (6,'0x28, 0xF0, 0xA7'),
+ (7,'0x28, 0xF8, 0xA7')
+
+ Insert Into Humid_Sensors
+ Values
+ (1,'0x28, 0xc5, 0x05'),
+ (2,'0x28, 0x86, 0x0C'),
+ (3,'0x28, 0x8C, 0x33'),
+ (4,'0x28, 0x3E, 0xAC'),
+ (5,'0x28, 0x3B, 0x80'),
+ (6,'0x28, 0xA0, 0xA7'),
+ (7,'0x28, 0xB8, 0xA7')
+
+  Insert Into  Motion_Sensors
+ Values
+ (1,'0x18, 0xE5, 0x05'),
+ (2,'0x18, 0x96, 0x0C'),
+ (3,'0x18, 0x3C, 0x33'),
+ (4,'0x18, 0x7E, 0xAC'),
+ (5,'0x18, 0x2B, 0x80'),
+ (6,'0x38, 0xF0, 0xA7'),
+ (6,'0x38, 0xB0, 0xA7')
+ 
+ Insert Into Sensors
+ Values
+ (1, 26.00, 50.60, 0, 500, 30, '17/10/2022 19:00:00'),
+ (2, 22.00, 60.60, 1, 450, 40, '17/10/2022 19:00:00'),
+ (4, 23.00, 50.60, 0, 300, 50, '17/10/2022 19:00:00'),
+ (3, 27.00, 40.60, 1, 400, 35, '17/10/2022 19:00:00'),
+ (7, 21.50, 50.60, 0, 550, 45, '17/10/2022 19:00:00'),
+ (5, 23.50, 30.60, 0, 350, 55, '17/10/2022 19:00:00'),
+ (6, 10.50, 70.60, 0, 700, 0, '17/10/2022 19:00:00')
+
+
+ Select Id, Name_Room From Roms
+
+ Select * From Sensors 
+ Where Id = 2
+
+ Delete Roms
+ Where Id=2
+
+ Select * From Sensors 
+ Where Id = 2
+
+ Select * From Temp_Sensors 
+ Where Id = 2
+
+
+
+
+ Use CourseDB;
+ SELECT Name_Room,Temp_Addres from Sensors
+ Join Temp_Sensors on Temp_Sensors.ID = Sensors.ID
+ Join Roms on Roms.ID = Sensors.ID
+
+
+ Select ID, COUNT(*) AS Humid_Sensor
+ From Sensors
+ Group By ID
+
+
+ Select ID, COUNT(*) AS Humid_Sensor
+ From Sensors
+ Group By ID
+ HAVING COUNT(*)>1
+
+ Use CourseDB;
+ GO
+ CREATE PROCEDURE GetSensorsAddres AS
+ BEGIN
+ SELECT Humid_Addres
+ FROM Humid_Sensors
+ SELECT Temp_Addres
+ FROM Temp_Sensors
+ END;
+
+ EXEC GetSensorsAddres
+  
+
+ go
+ CREATE TRIGGER Sensors_INSERT
+ ON Sensors
+ AFTER INSERT
+ AS
+ UPDATE Sensors
+ SET Temp_Sensor = Temp_Sensor*0.8
+ Where ID = (SELECT ID FROM inserted)
+
+ SELECT * FROM Sensors
+
+ Insert Into Sensors
+ Values
+ (1, 20.00, 50.60, 0, 500, 30, '18/10/2022 19:00:00')
+ 
+ SELECT * FROM Sensors
